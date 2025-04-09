@@ -51,6 +51,14 @@ class CleanPodPolicy(Enum):
     ALL = kubeflow_common.CLEANPOD_POLICY_ALL
     RUNNING = kubeflow_common.CLEANPOD_POLICY_RUNNING
 
+@dataclass
+class SchedulingPolicy:
+    """
+    SchedulingPolicy describes how to schedule a job in terms of queues and priority classes
+    """
+    queue: Optional[str] = None
+    priority_class: Optional[str] = None
+    min_available: Optional[int] = None
 
 @dataclass
 class RunPolicy:
@@ -63,12 +71,14 @@ class RunPolicy:
         can remain active before it is terminated. Must be a positive integer. This setting applies only to pods.
         where restartPolicy is OnFailure or Always.
         backoff_limit (int): Number of retries before marking this job as failed.
+        scheduling_policy (SchedulingPolicy): Configuration of scheduling parameters for the PyTorchJo
     """
 
-    clean_pod_policy: CleanPodPolicy = None
+    clean_pod_policy: Optional[CleanPodPolicy] = None
     ttl_seconds_after_finished: Optional[int] = None
     active_deadline_seconds: Optional[int] = None
     backoff_limit: Optional[int] = None
+    scheduling_policy: Optional[SchedulingPolicy] = None
 
 
 @dataclass
@@ -300,6 +310,11 @@ def _convert_run_policy_to_flyte_idl(
         ttl_seconds_after_finished=run_policy.ttl_seconds_after_finished,
         active_deadline_seconds=run_policy.active_deadline_seconds,
         backoff_limit=run_policy.backoff_limit,
+        scheduling_policy=kubeflow_common.SchedulingPolicy(
+            queue = run_policy.scheduling_policy.queue,
+            priority_class = run_policy.scheduling_policy.priority_class,
+            min_available = run_policy.scheduling_policy.min_available,
+        )
     )
 
 
