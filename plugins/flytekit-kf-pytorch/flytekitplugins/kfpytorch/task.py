@@ -306,14 +306,14 @@ def _convert_run_policy_to_flyte_idl(
     run_policy: RunPolicy,
 ) -> kubeflow_common.RunPolicy:
     return kubeflow_common.RunPolicy(
-        clean_pod_policy=(run_policy.clean_pod_policy.value if run_policy.clean_pod_policy else None),
+        clean_pod_policy=run_policy.clean_pod_policy.value if run_policy.clean_pod_policy else None,
         ttl_seconds_after_finished=run_policy.ttl_seconds_after_finished,
         active_deadline_seconds=run_policy.active_deadline_seconds,
         backoff_limit=run_policy.backoff_limit,
         scheduling_policy=kubeflow_common.SchedulingPolicy(
-            queue = run_policy.scheduling_policy.queue,
-            priority_class = run_policy.scheduling_policy.priority_class,
-            min_available = run_policy.scheduling_policy.min_available,
+            queue=run_policy.scheduling_policy.queue if run_policy.scheduling_policy else None,
+            priority_class=run_policy.scheduling_policy.priority_class if run_policy.scheduling_policy else None,
+            min_available=run_policy.scheduling_policy.min_available if run_policy.scheduling_policy else None,
         )
     )
 
