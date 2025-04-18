@@ -72,6 +72,7 @@ class RunPolicy:
         where restartPolicy is OnFailure or Always.
         backoff_limit (int): Number of retries before marking this job as failed.
         scheduling_policy (SchedulingPolicy): Configuration of scheduling parameters for the PyTorchJo
+        suspend (bool): Suspend job execution
     """
 
     clean_pod_policy: Optional[CleanPodPolicy] = None
@@ -79,6 +80,7 @@ class RunPolicy:
     active_deadline_seconds: Optional[int] = None
     backoff_limit: Optional[int] = None
     scheduling_policy: Optional[SchedulingPolicy] = None
+    suspend: Optional[bool] = None
 
 
 @dataclass
@@ -314,7 +316,8 @@ def _convert_run_policy_to_flyte_idl(
             queue=run_policy.scheduling_policy.queue if run_policy.scheduling_policy else None,
             priority_class=run_policy.scheduling_policy.priority_class if run_policy.scheduling_policy else None,
             min_available=run_policy.scheduling_policy.min_available if run_policy.scheduling_policy else None,
-        )
+        ),
+        suspend=run_policy.suspend,
     )
 
 
